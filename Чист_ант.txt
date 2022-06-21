@@ -1,0 +1,115 @@
+import random #импортируем библиотеку для ввода случайным образом
+
+#--------------------------------------
+#Определяемся с вводом данных
+way = input('Введите способ ввода данных (ручной, рандом, файл): ')
+print ()
+
+if way == 'ручной':
+    #Вводим от руки
+    
+    n = int(input('Введите количество стратегий игрока А: '))
+    print ()
+
+    strat_A = input('Введите названия стратегий для А через пробел в строку: ').split()
+    print ()
+
+    if len(strat_A) != n:
+        print ('Данные введены неверно!')
+        exit ()
+    
+    m = int(input('Введите количество стратегий игрока B: '))
+    print ()
+
+    strat_B = input('Введите названия стратегий для B через пробел в строку: ').split()
+    print ()
+
+    if len(strat_B) != m:
+        print ('Данные введены неверно!')
+        exit ()
+
+    print ('Введите матрицу (строки - А, столбцы - В)')
+    matrica = [[float(j) for j in input().split()] for i in range(n)]
+    print ()
+
+elif way == 'рандом':
+    #Генерируем рандомно
+    
+    strat_A = []
+    strat_B = []
+    
+    n = random.randint (3, 7)
+    m = random.randint (3, 7)
+    matrica = [[random.randint(10, 1000) for i in range(m)] for j in range(n)]
+    
+    for i in range (n):
+        strat_A.append ('a' + str(i + 1))
+        
+    for i in range (m):
+        strat_B.append ('b' + str(i + 1))    
+    
+    print ('Сгенерированное количество стратегий игрока А: ', n)
+    print ('Сгенерированное количество стратегий игрока B: ', m)
+    print ('Сгенерированная матрица: ')
+    for i in matrica:
+        print (*i)
+    print ()
+    
+elif way == 'файл':
+    #Считываем исходные данные из файла
+    
+    strat_A = []
+    strat_B = []    
+    matrica = []
+    
+    name = input('Сохраните ваш файл в папку с этой программой и введите его имя без кавычек: ')
+    file = open(name, "r") 
+    print ()
+    
+    for line in file: 
+        matrica.append([float(x) for x in line.split()])
+        
+    m = len(matrica[0])
+    n = len(matrica)
+    
+    for i in range (n):
+        strat_A.append ('a' + str(i + 1))
+        
+    for i in range (m):
+        strat_B.append ('b' + str(i + 1))    
+    
+    print ('Считанное количество стратегий игрока А: ', n)
+    print ('Считанное количество стратегий игрока B: ', m)
+    print ('Считанная матрица: ')
+    for row in matrica: 
+        print (*row)
+    file.close ()
+    print ()
+       
+
+
+vig_A = []
+vig_B = []
+
+#--------------------------------------
+#Ищем минимумы по строкам
+for i in matrica:
+    if len(i) != m:
+        print ('Данные введены неверно!')
+        exit ()
+    else:
+        vig_A.append (min(i))
+
+#--------------------------------------
+#Транспонируем и ищем максимумы по строкам   
+matrica = [[matrica[j][i] for j in range(len(matrica))] for i in range (len(matrica[0]))]
+for i in matrica:
+    vig_B.append (max(i))
+    
+print ('Выигрыш А при чистой оптимальной стратегии:', max(vig_A)) #максимин
+print ('Стратегия для А:', strat_A[vig_A.index(max(vig_A))])
+print ()
+print ('Выигрыш B при чистой оптимальной стратегии:', min(vig_B)) #минимакс
+print ('Стратегия для B:', strat_B[vig_B.index(min(vig_B))])
+
+

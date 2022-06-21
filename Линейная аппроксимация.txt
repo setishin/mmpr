@@ -1,0 +1,250 @@
+from statistics import mean
+import numpy as np
+
+def disp (y):
+    
+    '''
+    Функция вычисления дисперсии
+    '''
+    
+    mass_disp = []
+    for i in y:
+        mass_disp.append ((mean(y) - i) ** 2)
+        
+    return (round(sum(mass_disp)/len(mass_disp), 5))
+        
+    
+def linaprox (x, y):
+    
+    '''
+    Функция линейной апроксимации
+    '''
+    
+    proizv = []
+    x_kv = []
+    output = []
+    output_1 = []
+    
+    for i in range (len(x)):
+        proizv.append (x[i] * y[i])
+        x_kv.append (x[i] ** 2)
+        
+    a_zv = (mean(proizv) - mean(x) * mean(y)) / (mean(x_kv) - mean(x) ** 2) 
+    b_zv = mean(y) - a_zv * mean(x)
+    
+    for i in range(len(x)):
+        output.append (x[i])
+        output.append (y[i])
+        output.append (round (a_zv * x[i] + b_zv, 5))
+        
+    for i in range(0, len(output), 3):
+        output_1.append (output[i : i + 3])   
+        
+    return (round(a_zv, 5), round (b_zv, 5), output_1)
+
+
+def kvadaprox (x, y):
+    
+    '''
+    Функция квадратичной апроксимации
+    '''
+    
+    x_kv = []
+    x_cub = []
+    x_bikv = []
+    proizv = []
+    prozv_x_kv_y = []
+    matrica = [[],[],[]]
+    matrica_rash = []
+    output = []
+    output_1 = []
+    
+    for i in range (len(x)):
+        x_kv.append (x[i] ** 2)
+        x_cub.append (x[i] ** 3)
+        x_bikv.append (x[i] ** 4)
+        proizv.append (x[i] * y[i])
+        prozv_x_kv_y.append (x[i] ** 2 * y[i])
+    
+    matrica[0].append (sum(x_bikv))
+    matrica[0].append (sum(x_cub))
+    matrica[0].append (sum(x_kv))
+    
+    matrica[1].append (sum(x_cub))
+    matrica[1].append (sum(x_kv))
+    matrica[1].append (sum(x))
+    
+    matrica[2].append (sum(x_kv))
+    matrica[2].append (sum(x))
+    matrica[2].append (len(x))
+    
+    matrica_rash.append(sum(prozv_x_kv_y))
+    matrica_rash.append(sum(proizv))
+    matrica_rash.append(sum(y))
+    
+    matrica_num = np.matrix (matrica)
+    matrica_num_inv = np.linalg.inv (matrica_num)
+    matrica_num_rash = np.matrix (matrica_rash)
+    num_proizv = np.multiply (matrica_num_inv, matrica_num_rash)
+    
+    zv = np.sum (num_proizv, 1)
+    a_zv = float(*zv[0])
+    b_zv = float(*zv[1])
+    c_zv = float(*zv[2])
+    
+    for i in range(len(x)):
+        output.append (x[i])
+        output.append (y[i])
+        output.append (round (a_zv * (x[i] ** 2) + b_zv * x[i] + c_zv, 5))
+        
+    for i in range(0, len(output), 3):
+        output_1.append (output[i : i + 3])     
+    
+    return (round(a_zv, 5), round (b_zv, 5), round (c_zv, 5), output_1)
+
+
+
+def chistka (x, y, proc):
+    
+    '''
+    Функция чистки (номер 1.3)
+    '''
+    
+    proc = 0.01 * proc * len(y)
+    proc = int(proc)
+    output = []
+    output_1 = []
+    output_2 = []
+    output_3 = []
+    dsp = disp (y)
+    
+    for i in range (proc):
+        dsp_1 = disp (y)
+        razn = []
+        for j in y:
+            razn.append (abs(j - dsp_1))
+        udal = razn.index(max(razn))
+        x.pop (udal)
+        y.pop (udal)
+        dsp_2 = disp (y)
+        
+        output.append (x[udal])
+        output.append (y[udal])
+        output.append (round(abs(dsp_1 - dsp_2), 5))
+    
+    for i in range(0, len(output), 3):
+        output_1.append (output[i : i + 3])    
+        
+    for i in range(len(x)):
+        output_2.append (x[i])
+        output_2.append (y[i])
+        
+    for i in range(0, len(output_2), 2):
+        output_3.append (output_2[i : i + 2])
+        
+    return (output_1, round(abs(dsp - dsp_2), 5), output_3)
+
+
+
+
+#------------------------- Основной код
+klo = input ('Введите формат ввода (ручной, готовые данные): ')
+print ()
+if klo == 'готовые данные':
+    
+    a = [400, 500, 600, 700, 800, 900, 1000, 150, 50, 100, 200, 300, 550, 200, 950]
+    b = [850, 900, 1000, 1100, 1200, 1500, 1900, 1500, 900, 750, 800, 900, 1300, 1100, 600]
+    
+    ax = [400, 500, 600, 700, 800, 900, 50, 100, 200, 300, 550, 200]
+    bx = [850, 900, 1000, 1100, 1200, 1500, 900, 750, 800, 900, 1300, 1100]    
+    
+    a1 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+    b1 = [3.03, 3.142, 3.358, 3.463, 3.772, 3.251, 3.17, 3.665]
+    
+    a2 = [400, 500, 600, 700, 800, 900, 1000, 150, 50, 100, 
+          200, 300, 550, 200, 950, 300, 550, 400, 450, 950, 
+          100, 3000, 150, 200, 750, 300, 350, 450, 700, 1100]
+    b2 = [850, 900, 1000, 1100, 1200, 1500, 1900, 1500, 900, 750, 
+          800, 900, 1300, 1100, 600, 1800, 3000, 700, 500, 2700, 
+          1600, 1700, 1150, 850, 1250, 6000, 2400, 3600, 4800, 1750]
+    
+elif klo == 'ручной':
+    
+    print ('Введите значения X (через пробел в строку):')
+    aa = input().split()
+    a = []
+    for i in aa:
+        a.append (float(i))
+        
+    print ()
+    
+    print ('Введите значения Y (через пробел в строку):')
+    bb = input().split()
+    b = []
+    for i in bb:
+        b.append (float (i))
+        
+    print ()
+    
+    a1 = a
+    b1 = b
+    
+    a2 = a
+    b2 = b
+    
+else:
+    print ('Данные введены неверно!')
+    exit ()
+    
+if len(a) != len (b):
+    print ('Массивы не совпадают по длине!')
+    exit ()
+    
+    
+klo = input ('Введите задачу для решения (линейная, квадратичная, выбросы): ')
+print ()
+
+if klo == 'линейная':
+    
+    prty = linaprox(a, b)
+    print ('а) Массив:')
+    print (*prty[2], sep = ';')
+    print ()
+    print ('б) Функция:')
+    print ('y = ', prty[0], '* x + (', prty[1], ')')
+    print ()
+    print ('в) Дисперсия:')
+    print (disp(b))
+    
+elif klo == 'квадратичная':
+    
+    prty = kvadaprox(ax, bx)
+    print ('а) Массив:')
+    print (*prty[3], sep = ';')
+    print ()
+    print ('б) Функция:')
+    print ('y = ', prty[0], '* x ^ 2 + (', prty[1], ') * x + (', prty[2], ')')
+    print ()
+    print ('в) Дисперсия:')
+    print (disp(bx))
+    
+elif klo == 'выбросы':
+    
+    n = float(input('Введите процент точек числом без знака %: '))
+    print()
+    if (0.01 * n * len(a)) < 1:
+        print ('Данные введены неверно')
+        quit ()
+    prty = chistka (a2, b2, n)
+    
+    print ('а) Массив после исключения:')
+    print (*prty[2], sep = ';')
+    print ()
+    print ('б) Падение дисперсии:')
+    print (prty[1])
+    print ()
+    print ('в) Список удалённых точек и дисперсий:')
+    print (*prty[0], sep = ';')
+    print ()  
+    
+

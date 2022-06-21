@@ -1,0 +1,110 @@
+#Введите количество касс: 3
+#Введите время обработки: 1.5
+#Введите максимальную длину очереди: 9
+#Введите количество интервалов: 4
+#Введите длину интервала: 180
+#Введите количество клиентов в каждом интервале через пробел: 50 300 150 500
+
+import math
+
+n = int(input('Введите количество касс: '))
+t = float(input('Введите время обработки: '))
+m = int(input('Введите максимальную длину очереди: '))
+k = int(input('Введите количество интервалов: '))
+dl = float(input('Введите длину интервала: '))
+interv_str = (input('Введите количество клиентов в каждом интервале через пробел: ').split())
+
+interv = []
+lambd = []
+ro = []
+
+for i in interv_str:
+    interv.append (int(i))
+    lambd.append (round(int(i) / dl, 2))
+    
+if len(interv) != k:
+    print ('Данные введены неверно!')
+    quit ()
+    
+mu = [1 / t] * k
+for i in range(len(lambd)):
+    ro.append (lambd[i] / mu[i])
+    
+p_0 = []
+for j in range (k):
+    s_ob = 0
+    s_och = 0
+    for i in range (n):
+        s_ob = s_ob + ((ro[j] ** float(i)) / (math.factorial(i)))
+    for i in range (n + 1, n + m + 1):
+        s_och = s_och + ((ro[j] ** i) / ((n ** (i - n)) * math.factorial(n)))
+    p_0.append (1/(s_ob + s_och))
+    
+p_obsl = []
+p_obsl_1 = []
+for i in range (n + 1):
+    for j in range (k):
+        p_obsl.append (round(((ro[j] ** i) * p_0[j]) / math.factorial (i), 2))
+        
+p_och = []
+for i in range (n + 1, n + m + 1):
+    for j in range (k):
+        p_och.append (round(((ro[j] ** i) * p_0[j]) / ((n ** (i - n)) * math.factorial(n)), 2))
+        
+for i in range(0, len(p_obsl), k):
+        p_obsl_1.append (p_obsl[i : i + k])
+
+for i in range(0, len(p_och), k):
+        p_obsl_1.append (p_och[i : i + k])
+
+p_obsl_1 = [[p_obsl_1[j][i] for j in range(len(p_obsl_1))] for i in range (len(p_obsl_1[0]))]
+
+print ('--------------------------')
+print ('Лямбда:', *lambd)
+print ('Мю:', *mu)
+print ('Показатель нагруженности: ', *ro)
+print ('--------------------------')
+print ('Матрица вероятностей состояния системы:')
+for i in p_obsl_1:
+    print (*i)
+print ('--------------------------')
+
+p_obsl_1 = [[p_obsl_1[j][i] for j in range(len(p_obsl_1))] for i in range (len(p_obsl_1[0]))]
+ocher = p_obsl_1[n + 1: n + m]
+ocher = [[ocher[j][i] for j in range(len(ocher))] for i in range (len(ocher[0]))]
+sum_ocher = []
+for i in range (k):
+    sum_ocher.append (sum(ocher[i]))
+    
+print ('Вероятности отказа в обслуживании: ', *p_obsl_1[n + m])
+print ('Вероятности встать в очередь: ', *sum_ocher)
+
+l_och = []
+t_och = []
+for i in range (k):
+    l_och.append (round(((ro[i] ** (n + 1)) * (1 - ((ro[i] / n) ** m) * (m + 1 - (m * ro[i]) / n)) * p_0[i]) / (n * math.factorial(n) * (1 - ro[i] / n) ** 2), 2))
+    t_och.append (round(((ro[i] ** (n + 1)) * (1 - ((ro[i] / n) ** m) * (m + 1 - (m * ro[i]) / n)) * p_0[i]) / (n * math.factorial(n) * ((1 - ro[i] / n) ** 2) * lambd[i] * (1 - p_obsl_1[n + m][i])), 2))
+
+print ('Средняя длина очереди: ', *l_och)
+print ('Среднее время ожидания в очереди: ', *t_och)
+print ('--------------------------')
+
+A = []
+Q = []
+n_zan = []
+K_pr = []
+for i in range (k):
+    A.append (round(lambd[i] * (1 - p_obsl_1[n + m][i]), 2))
+    Q.append (round(1 - p_obsl_1[n + m][i], 2))
+    n_zan.append (round((lambd[i] * (1 - p_obsl_1[n + m][i])) / mu[i], 2))
+    K_pr.append (round(1 - (((lambd[i] * (1 - p_obsl_1[n + m][i])) / mu[i])) / (n), 2))
+    
+print ('Абсолютная пропускная способность: ', *A)
+print ('Относительная пропускная способность: ', *Q)
+print ('Среднее количество занятых приборов: ', *n_zan)
+print ('Коэффициент простоя: ', *K_pr)
+    
+                  
+
+    
+

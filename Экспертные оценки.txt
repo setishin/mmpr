@@ -1,0 +1,157 @@
+import statistics as st
+
+#----------------------------------------
+def srballs (matrix):
+    
+    '''
+    Функция математической обработки экспертных оценок
+    На вход: матрица экспертных оценок
+    На выход: вектор мат. ожиданий, вектор дисперсий, вектор сигм, вектор доверительных интервалов
+    '''
+    
+    vector_mean = []
+    vector_disp = []
+    vector_srkv_otklon = []
+    vector_dover = []
+    vector_dover1 = []
+    
+    for i in matrix:
+        vector_mean.append (st.mean(i))
+        vector_disp.append (st.variance(i))
+        vector_srkv_otklon.append (st.variance(i) ** 0.5)
+        vector_dover.append (st.mean(i) - 2 * (st.variance(i) ** 0.5))
+        vector_dover.append (st.mean(i) + 2 * (st.variance(i) ** 0.5))
+    
+    for i in range(0, len(vector_dover), 2):
+        vector_dover1.append (vector_dover[i : i + 2])     
+    
+    return (vector_mean, vector_disp, vector_srkv_otklon, vector_dover1)
+
+#----------------------------------------
+def rangi (matrix):
+    
+    '''
+    Функция математической обработки ранговых оценок
+    На вход: матрица ранговых оценок
+    На выход: вектор медиан рангов, 
+              вектор коэффициентов компетентности эксперты,
+              вектор средневзвешенных рангов с учётом коэф. компетентности
+    '''
+    
+    vector_med = []
+    vector_mean = []
+    vector_koef = []
+    expert = []
+    expert_1 = []
+    n = len (matrix)
+    
+    for i in matrix:
+        vector_med.append (st.median(i))
+        vector_mean.append (st.mean(i))
+    
+    lenlen = len(matrix[0])
+        
+    matrix = [[matrix[j][i] for j in range(len(matrix))] for i in range (len(matrix[0]))]
+    
+    for i in range(lenlen):
+        temp = []
+        for j in range (n):
+            temp.append ((matrix[i][j] - vector_mean[j]) ** 2)
+        expert.append (1/(sum(temp) / (n - 1)))
+      
+    for i in expert:
+        expert_1.append (i / sum(expert))
+    
+    matrix = [[matrix[j][i] for j in range(len(matrix))] for i in range (len(matrix[0]))]
+    
+    for i in range(len(matrix)):
+        temp_vect = []
+        for j in range(len(matrix[i])):
+            temp_vect.append (matrix[i][j] * expert_1[j])  
+        vector_koef.append (sum(temp_vect))  
+    
+    return (vector_med, expert_1, vector_koef)
+
+#----------------------------------------    
+def manual_input ():
+    
+    '''
+    Функция ручного вввода матрицы
+    На вход: ничего
+    На выход: введённая от руки матрица
+    '''
+    
+    n = int(input('Введите количество объектов иссследования: '))
+    print ('Введите матрицу (числа через пробел, строки - объекты, столбцы - эксперты): ')
+    
+    matrix = []        
+    for i in range(n): 
+        matrix.append(list(map(float, input().split())))
+    print()
+    return (matrix)
+
+#----------------------------------------    
+def file_input ():
+    
+    '''
+    Функция считывания матрицы из файла
+    На вход: ничего
+    На выход: считанная матрица
+    '''
+    
+    name = input('Сохраните ваш файл в папку с этой программой и введите его имя: ')
+    file = open(name, "r")
+    matrix = [] 
+    
+    for line in file: 
+        matrix.append([float(x) for x in line.split()])
+    n = len(matrix[0])
+    print ('Считанная матрица: ')
+    for row in matrix: 
+        print (*row)
+    file.close()
+    return (matrix)
+    
+#----------------------------------------    
+zadacha = input('Введите задачу для решения (экспертных, ранговых): ')
+print()
+
+if zadacha == 'экспертных':
+    
+    a = input ('Введите способ ввода данных (ручной, файл): ')
+    if a == 'ручной':
+        matrix = manual_input()
+    
+    elif a == 'файл':
+        matrix = file_input()
+    
+    else:
+        print ('Данные введены неверно!')
+        quit ()
+    
+    print ('Вектор мат. ожиданий: ', srballs (matrix)[0])
+    print ('Вектор дисперсий: ', srballs (matrix)[1])
+    print ('Вектор среднеквадратичных отклонений: ', srballs (matrix)[2])
+    print ('Вектор доверительных интервалов: ', srballs (matrix)[3])
+
+elif zadacha == 'ранговых':
+    
+    a = input ('Введите способ ввода данных (ручной, файл): ')
+    if a == 'ручной':
+        matrix = manual_input()
+    
+    elif a == 'файл':
+        matrix = file_input()
+    
+    else:
+        print ('Данные введены неверно!')
+        quit ()
+
+    
+    print ('Вектор медиан рангов: ', rangi (matrix)[0])
+    print ('Вектор коэф. компетентности: ', rangi (matrix)[1])
+    print ('Вектор средневз. рангов: ', rangi (matrix)[2])
+    
+else:
+    print ('Данные введены неверно!')
+    quit ()

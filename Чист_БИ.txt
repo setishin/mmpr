@@ -1,0 +1,160 @@
+import random #импортируем библиотеку для ввода случайным образом
+
+#--------------------------------------
+#Определяемся с вводом данных
+way = input('Введите способ ввода данных (ручной, рандом, файл): ')
+print ()
+
+if way == 'ручной':
+    #Вводим от руки
+    n = int(input('Введите количество стратегий игрока А: '))
+    print ()
+
+    strat_A = input('Введите названия стратегий для А через пробел в строку: ').split()
+    print ()
+
+    if len(strat_A) != n:
+        print ('Данные введены неверно!')
+        exit ()
+    
+    m = int(input('Введите количество стратегий игрока B: '))
+    print ()
+
+    strat_B = input('Введите названия стратегий для B через пробел в строку: ').split()
+    print ()
+
+    if len(strat_B) != m:
+        print ('Данные введены неверно!')
+        exit ()
+
+    print ('Введите первую матрицу (строки - А, столбцы - В)')
+    matrica1 = [[float(j) for j in input().split()] for i in range(n)]
+    print ()
+
+    print ('Введите вторую матрицу (строки - А, столбцы - В)')
+    matrica2 = [[float(j) for j in input().split()] for i in range(n)]
+    print ()
+    
+elif way == 'рандом':
+    #Генерируем рандомно
+    
+    strat_A = []
+    strat_B = []
+    
+    n = random.randint (3, 7)
+    m = random.randint (3, 7)
+    matrica1 = [[random.randint(10, 1000) for i in range(m)] for j in range(n)]
+    matrica2 = [[random.randint(10, 1000) for i in range(m)] for j in range(n)]
+    
+    for i in range (n):
+        strat_A.append ('a' + str(i + 1))
+        
+    for i in range (m):
+        strat_B.append ('b' + str(i + 1))    
+    
+    print ('Сгенерированное количество стратегий игрока А: ', n)
+    print ('Сгенерированное количество стратегий игрока B: ', m)
+    print ('Сгенерированная первая матрица: ')
+    for i in matrica1:
+        print (*i)
+    print ()    
+    print ('Сгенерированная вторая матрица: ')
+    for i in matrica2:
+            print (*i)
+    print ()
+
+elif way == 'файл':
+    #Считываем исходные данные из файла
+    
+    strat_A = []
+    strat_B = []    
+    matrica1 = []
+    matrica2 = []
+    
+    name = input('Сохраните ваш файл в папку с этой программой и введите его имя без кавычек: ')
+    file = open(name, "r") 
+    print ()
+
+    ff = [line.strip() for line in file]
+    razdel = ff.index('')
+
+    matrica1 = ff[0 : razdel]
+    matrica2 = ff[razdel + 1 : len(ff)]
+
+    for i in range(len(matrica1)):
+        matrica1[i] = matrica1[i].split()
+        for j in range(len(matrica1[i])):
+            matrica1[i][j] = float (matrica1[i][j])
+        
+    for i in range(len(matrica2)):
+        matrica2[i] = matrica2[i].split()
+        for j in range(len(matrica2[i])):
+            matrica2[i][j] = float (matrica2[i][j])
+    
+
+    
+    for line in file: 
+        matrica.append([float(x) for x in line.split()])
+        
+    m = len(matrica1[0])
+    n = len(matrica1)
+    
+    m_test = len(matrica2[0])
+    n_test = len(matrica2)
+    
+    if m != m_test or n != n_test:
+        print ('В файле содержатся матрицы разного размера!')
+        exit ()
+    
+    for i in range (n):
+        strat_A.append ('a' + str(i + 1))
+        
+    for i in range (m):
+        strat_B.append ('b' + str(i + 1))    
+    
+    print ('Считанное количество стратегий игрока А: ', n)
+    print ('Считанное количество стратегий игрока B: ', m)
+    print ('Считанная первая матрица: ')
+    for row in matrica1: 
+        print (*row)
+    print()
+        
+    print ('Считанная вторая матрица: ')
+    for row in matrica2:         
+        print (*row)
+    file.close ()
+    print ()
+    
+    
+    
+
+vig_A = []
+vig_B = []
+
+matrica1 = [[matrica1[j][i] for j in range(len(matrica1))] for i in range (len(matrica1[0]))]
+for i in matrica1:
+    vig_A.append (max(i))
+    
+for i in matrica2:
+    vig_B.append (max(i)) 
+    
+    
+k = 0
+for i in range (len(vig_A)):
+    if vig_A[i] == min(vig_A) and vig_B[i] == min(vig_B):
+        k = k + 1
+print ('Количество равновесий по Нэшу:', k)
+
+if k > 0:
+    print ('Выигрыш А при чистой опмтимальной стратегии:', max(vig_A))
+    print ('Стратегия для А:', strat_B[vig_A.index(max(vig_A))])
+    print ()
+    print ('Выигрыш B при чистой оптимальной стратегии:', max(vig_B))
+    print ('Стратегия для B:', strat_A[vig_B.index(max(vig_B))])
+    print ()
+    print ('Суммарный выигрыш:', max(vig_A) + max(vig_B))
+    print ()
+else:
+    print ('Стратегии нужно смешивать!')
+
+

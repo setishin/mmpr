@@ -1,0 +1,53 @@
+m = 4
+n = 4
+matrica = [[50, 30, 35, 45], [40, 40, 55, 40], [35, 40, 45, 55], [10, 20, 25, 35]]
+priroda = [0.15, 0.25, 0.5, 0.1]
+strat_A = [1, 2, 3, 4]
+
+#--------------------------------------
+#Баес и Лаплас
+matrica_baes = []
+matrica_laplas = []
+for i in range(len(matrica)):
+    k = -1
+    for j in range(len(matrica[i])):
+        k = k + 1
+        matrica_baes.append(matrica[i][j] * float(priroda[k]))
+        matrica_laplas.append(matrica[i][j] * (1 / m))
+        
+
+s_baes = []
+s_laplas = []
+for i in range(m - 1, len(matrica_baes) + 1, m):
+    s_baes.append (sum (matrica_baes[i - (m - 1) : i + 1])) 
+    
+for i in range(m - 1, len(matrica_laplas) + 1, m):
+    s_laplas.append (sum (matrica_laplas[i - (m - 1) : i + 1]))
+
+
+#Гермейер    
+priroda_gey = [priroda] * m
+matrica_gey = []
+for i in range(len(matrica)):
+    for j in range(len(matrica[i])):
+        matrica_gey.append (matrica[i][j] * priroda_gey[i][j])
+        
+matrica_gey_1 = []
+gey_mn = []
+for i in range(0, len(matrica_gey), m):
+    matrica_gey_1.append (matrica_gey[i : i + m]) 
+
+for i in matrica_gey_1:
+    gey_mn.append (min(i))
+    
+print ('Выигрыш А по критерию Лапласа:', max(s_laplas))
+print ('Стратегия для А:', strat_A[s_laplas.index(max(s_laplas))])
+print ()
+        
+print ('Выигрыш А по критерию Баеса:', max(s_baes))
+print ('Стратегия для А:', strat_A[s_baes.index(max(s_baes))])
+print ()
+
+print ('Выигрыш А при оптимальной чистой стратегии по критерию Гермейера:', min(matrica[gey_mn.index(max(gey_mn))]))
+print ('Стратегия для А:', strat_A[gey_mn.index(max(gey_mn))])
+

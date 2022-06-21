@@ -1,0 +1,79 @@
+m = 4
+n = 4
+matrica = [[50, 30, 35, 45], [40, 40, 40, 40], [70, 40, 35, 50], [10, 20, 25, 35]]
+
+#matrica = [[10, 10, 10, 10], [-10, 20, 20, 20], [-30, 0, 30, 30], [-50, -20, 10, 40]]
+
+strat_A = [1, 2, 3, 4]
+strat_priroda = ['a', 'b', 'c', 'd']
+
+pessimizm = []
+optimizm = []
+for i in matrica:
+    pessimizm.append (min (i))
+    optimizm.append (max (i))
+    
+mnmn = []
+mxmx = []
+svsv = []
+alpha_vector = []
+alpha_vector_1 = []
+vector_otvetov = []
+for i in matrica:
+    mnmn.append (min(i))
+    mxmx.append (max(i))
+    
+for i in range (0, 11):
+    for j in matrica:
+        alpha_vector.append (round(0.1 * i * float(max(j)) + (1 - 0.1 * i) * float(min(j)), 2))
+        
+for i in range(0, len(alpha_vector), m):
+    alpha_vector_1.append (alpha_vector[i : i + m])
+    
+for i in alpha_vector_1:
+    vector_otvetov.append (max(i))
+    
+alpha_vector_1 = [[alpha_vector_1[j][i] for j in range(len(alpha_vector_1))] for i in range (len(alpha_vector_1[0]))]
+
+matrica = [[matrica[j][i] for j in range(len(matrica))] for i in range (len(matrica[0]))]
+savidj = []
+savidj_1 = []
+res_savidj = []
+
+for i in matrica:
+    for j in i:
+        savidj.append (abs(j - max(i)))
+        
+for i in range(0, len(savidj), m):
+    savidj_1.append (savidj[i : i + m])
+    
+savidj_1 = [[savidj_1[j][i] for j in range(len(savidj_1))] for i in range (len(savidj_1[0]))]
+
+
+for i in savidj_1:
+    res_savidj.append (max(i))
+
+    
+print ('Выигрыш А по критерию пессимизма:', min(pessimizm))
+print ('Стратегия для А:', strat_A[pessimizm.index(min(pessimizm))])
+print ()
+            
+print ('Выигрыш А по критерию оптимизма:', max(optimizm))
+print ('Стратегия для А:', strat_A[optimizm.index(max(optimizm))])
+print ()
+
+print ('Выигрыш А по критерию Вальда:', max(pessimizm))
+print ('Стратегия для А:', strat_A[pessimizm.index(max(pessimizm))])
+print ()
+
+print ('Линейная свертка склонности к риску по критерию Гурвица')
+for i in alpha_vector_1:
+    print (*i)
+print ()
+print (*vector_otvetov)
+print ()
+
+print ('Величина минимальной недополученной прибыли по критерию Сэвиджа:', min(res_savidj))
+print ('Стратегия для А:', strat_A[res_savidj.index(min(res_savidj))])
+print ()
+    
