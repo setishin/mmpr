@@ -1,0 +1,7 @@
+0 20 26 22 inf 26 inf
+20 0 22 5 17 inf inf
+26 22 0 inf 11 20 15
+22 5 inf 0 11 9 inf
+inf 17 11 11 0 7 3
+26 inf 20 9 7 0 11
+inf inf 15 inf 3 11 0
